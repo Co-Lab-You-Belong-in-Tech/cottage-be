@@ -24,16 +24,6 @@ Prerequisites
    - MongoDB compass for testing
    - IDE (VSCode, etc)
 
-Setup
-
-    Navigate to the project directory with the command cd closer
-    Navigate to the frontend directory with the command cd backend
-    Install all the dependencies with the command bundle install
-    Create the database with the command rails db:create
-    Migration the database with the command rails db:migrate
-    Seed the database with the command rails db:seed
-    Start the app with the command rails s
-
 #### Other commands available
 > yarn init - Initialize a yarn project
 
