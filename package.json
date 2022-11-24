@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Abayomi Ogunnusi",
   "license": "MIT",
+  "scripts": {
+    "start": "node src/index.js"
+  },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.32.0",
