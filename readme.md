@@ -32,6 +32,11 @@ Prerequisites
 > yarn add [package name] - install specific package
     
 
+---
+
+#### Postman Documentation
+[Post docs here](https://documenter.getpostman.com/view/15544476/2s8YzP1Pbh)
+
 Author
 
 👤 Abayomi Ogunnusi
