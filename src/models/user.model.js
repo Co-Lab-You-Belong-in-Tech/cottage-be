@@ -29,10 +29,19 @@ const userSchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
+
     password: {
       type: String,
       required: true,
       trim: true,
+    },
+    emailToken: {
+      type: String,
+      trim: true,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
 
     role: {
