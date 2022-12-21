@@ -2,17 +2,23 @@ const User = require("../models/user.model.js");
 
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const mongoose = require("mongoose");
+const { cloudinary } = require("../utils/cloudinary");
+const { errorResMsg, successResMsg } = require("../lib/response.js");
+const sendEmail = require("../utils/email.js");
+const jwt = require("jsonwebtoken");
 
 // forgot password
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
+
+    if (!email) {
+      return errorResMsg(res, 400, "Please provide your email");
+    }
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({
-        status: "fail",
-        message: "User not found",
-      });
+      return errorResMsg(res, 404, "User not found");
     }
 
     const resetToken = user.createPasswordResetToken();
@@ -30,15 +36,13 @@ exports.forgotPassword = async (req, res) => {
 
     await sendEmail(options);
 
-    return res.status(200).json({
-      status: "success",
+    const dataInfo = {
       message: "Token sent to email",
-    });
+    };
+
+    return successResMsg(res, 200, dataInfo);
   } catch (error) {
-    return res.status(400).json({
-      status: "fail",
-      message: error.message,
-    });
+    return errorResMsg(res, 400, error.message);
   }
 };
 
@@ -56,36 +60,87 @@ exports.resetPassword = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Token is invalid or has expired",
-      });
+      return errorResMsg(res, 400, "Token is invalid");
     }
 
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
+    const hashedPassword = await bcrypt.hash(req.body.password, 12);
+
+    user.password = hashedPassword;
+    user.passwordConfirm = hashedPassword;
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
 
     await user.save();
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id }, process.env.USER_JWT_TOKEN, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    return res.status(200).json({
+    const dataInfo = {
       status: "success",
       token,
-    });
+    };
+    return res.status(200).json(dataInfo);
   } catch (error) {
-    return res.status(400).json({
-      status: "fail",
-      message: error.message,
-    });
+    return errorResMsg(res, 400, error.message);
   }
 };
 
-module.exports = {
-  forgotPassword,
-  resetPassword,
+// update host profile
+exports.updateHostProfile = async (req, res, next) => {
+  try {
+    const { gender, city, country, dob, aboutHostSummary } = req.body;
+    const { _id: id } = req.user;
+
+    if (id === null && id === "44") {
+      return errorResMsg(res, 400, "Please provide a valid id");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return errorResMsg(res, 400, "Invalid id");
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return errorResMsg(res, 404, "User not found");
+    }
+
+    if (user.role !== "host") {
+      return errorResMsg(res, 400, "You are not a host");
+    }
+
+    const uploadResponse = await cloudinary.uploader.upload(req.file.path);
+
+    const profilePicture = uploadResponse.secure_url;
+
+    if (user.profilePictureCloudinaryId) {
+      await cloudinary.uploader.destroy(user?.profilePictureCloudinaryId);
+    }
+    const public_id_ = uploadResponse.public_id;
+
+    await User.findByIdAndUpdate(
+      id,
+      {
+        gender,
+        city,
+        country,
+        dob,
+        profilePicture,
+        aboutHostSummary,
+        profilePictureCloudinaryId: public_id_,
+      },
+      {
+        new: true,
+      }
+    );
+    const dataInfo = {
+      status: "success",
+      message: "Profile updated successfully",
+    };
+
+    return successResMsg(res, 200, dataInfo);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 };

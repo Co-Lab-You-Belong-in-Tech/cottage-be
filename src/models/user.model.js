@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema(
   {
@@ -49,11 +50,59 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin", "host"],
       default: "user",
     },
+    passwordResetToken: {
+      type: String,
+    },
+    passwordResetExpires: {
+      type: String,
+    },
+    // host details
+    gender: {
+      type: String,
+      enum: ["male", "female", "rather not say"],
+      default: "male",
+    },
+    city: {
+      type: String,
+      trim: true,
+    },
+    country: {
+      type: String,
+      trim: true,
+    },
+    dob: {
+      type: Date,
+    },
+    profilePicture: {
+      type: String,
+    },
+    profilePictureCloudinaryId: {
+      type: String,
+    },
+    aboutHostSummary: {
+      type: String,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// createPasswordResetToken
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
+};
+
+
 
 const User = mongoose.model("User", userSchema);
 
