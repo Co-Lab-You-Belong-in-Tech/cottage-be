@@ -108,7 +108,7 @@ exports.userLogin = async (req, res) => {
 
     // Implement access-token
     const access_token = await jwt.sign(
-      { _id: user._id, email },
+      { _id: user._id, email, firstName, lastName },
       process.env.USER_JWT_TOKEN,
       {
         expiresIn: "2h",
