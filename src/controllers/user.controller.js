@@ -1,4 +1,5 @@
 const User = require("../models/user.model.js");
+const Product = require("../models/product.model.js");
 
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
@@ -139,6 +140,88 @@ exports.updateHostProfile = async (req, res, next) => {
     };
 
     return successResMsg(res, 200, dataInfo);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+// Create a product if you are a host
+exports.createProduct = async (req, res, next) => {
+  try {
+    const { _id: id } = req.user;
+    const {
+      foodType,
+      productName,
+      price,
+      city,
+      country,
+      deliveryOption,
+      productDescription,
+      experienceLevel,
+    } = req.body;
+
+    // validate input
+    if (
+      !(
+        foodType &&
+        productName &&
+        price &&
+        city &&
+        country &&
+        deliveryOption &&
+        productDescription &&
+        experienceLevel
+      )
+    ) {
+      return errorResMsg(res, 400, "Please provide all required fields");
+    }
+
+    if (id === null && id === "") {
+      return errorResMsg(res, 400, "Please provide a valid id");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return errorResMsg(res, 400, "Invalid id");
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return errorResMsg(res, 404, "User not found");
+    }
+
+    if (user.role !== "host") {
+      return errorResMsg(res, 400, "You are not a host");
+    }
+
+    // upload multiple images to cloudinary
+    const files = req.files;
+    const images = [];
+    for (const file of files) {
+      const uploadResponse = await cloudinary.uploader.upload(file.path);
+      images.push(uploadResponse.secure_url);
+    }
+
+    const product = await Product.create({
+      foodType,
+      productName,
+      price,
+      city,
+      country,
+      deliveryOption,
+      productDescription,
+      experienceLevel,
+      images,
+      host: id,
+    });
+
+
+    const dataInfo = {
+      status: "success",
+      message: "Product created successfully",
+    };
+
+    return successResMsg(res, 201, dataInfo);
   } catch (error) {
     console.log(error);
     next(error);

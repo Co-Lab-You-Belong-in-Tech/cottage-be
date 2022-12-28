@@ -3,6 +3,7 @@ const {
   updateHostProfile,
   forgotPassword,
   resetPassword,
+  createProduct,
 } = require("../controllers/user.controller");
 const { isAuthenticated } = require("../middleware/isAuthenticated");
 const { upload } = require("../utils/cloudinary");
@@ -17,5 +18,12 @@ router.put(
 
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
+
+router.post(
+  "/product",
+  upload.array("photos", 12),
+  isAuthenticated,
+  createProduct
+);
 
 module.exports = router;
