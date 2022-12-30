@@ -391,3 +391,29 @@ exports.searchProductsByLocation = async (req, res, next) => {
   }
 };
 
+// search products by food type
+exports.searchProductsByFoodType = async (req, res, next) => {
+  try {
+    const { foodType } = req.query;
+
+    if (!foodType) {
+      return errorResMsg(res, 400, "Please provide a food type");
+    }
+
+    const products = await Product.find({
+      foodType: { $regex: foodType, $options: "i" },
+    }).populate("host", "firstName lastName");
+
+    const dataInfo = {
+      message: "Products found",
+      products,
+    };
+
+    return successResMsg(res, 200, dataInfo);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
