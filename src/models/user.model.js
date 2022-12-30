@@ -82,6 +82,12 @@ const userSchema = new mongoose.Schema(
     aboutHostSummary: {
       type: String,
     },
+    productFavoritesList: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   {
     timestamps: true,

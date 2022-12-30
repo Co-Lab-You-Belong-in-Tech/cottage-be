@@ -141,7 +141,6 @@ exports.updateHostProfile = async (req, res, next) => {
 
     return successResMsg(res, 200, dataInfo);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -215,7 +214,6 @@ exports.createProduct = async (req, res, next) => {
       host: id,
     });
 
-
     const dataInfo = {
       status: "success",
       message: "Product created successfully",
@@ -223,7 +221,146 @@ exports.createProduct = async (req, res, next) => {
 
     return successResMsg(res, 201, dataInfo);
   } catch (error) {
-    console.log(error);
+    next(error);
+  }
+};
+
+// favorite a product
+exports.favoriteProduct = async (req, res, next) => {
+  try {
+    const { _id: id } = req.user;
+    const { productId } = req.params;
+
+    if (id === null && id === "") {
+      return errorResMsg(res, 400, "Please provide a valid id");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return errorResMsg(res, 400, "Invalid id");
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return errorResMsg(res, 404, "User not found");
+    }
+
+    if (user.role !== "user") {
+      return errorResMsg(res, 400, "You are not a user");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return errorResMsg(res, 400, "Invalid product id");
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return errorResMsg(res, 404, "Product not found");
+    }
+
+    // check if product is already in user's favorite list
+    const isProductInFavoriteList = product.favorites.includes(user._id);
+    if (isProductInFavoriteList) {
+      return errorResMsg(res, 400, "Product already in favorite list");
+    }
+
+    // add product to user's favorite list
+    await Product.findByIdAndUpdate(
+      productId,
+      {
+        $push: { favorites: id },
+      },
+      {
+        new: true,
+      }
+    );
+
+    // add product to user's favorite list
+    await User.findByIdAndUpdate(
+      id,
+      {
+        $push: { productFavoritesList: productId },
+      },
+      {
+        new: true,
+      }
+    );
+
+    const dataInfo = {
+      message: "Product added to favorite list",
+    };
+
+    return successResMsg(res, 200, dataInfo);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// unfavorite a product
+exports.unfavoriteProduct = async (req, res, next) => {
+  try {
+    const { _id: id } = req.user;
+    const { productId } = req.params;
+
+    if (id === null && id === "") {
+      return errorResMsg(res, 400, "Please provide a valid id");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return errorResMsg(res, 400, "Invalid id");
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return errorResMsg(res, 404, "User not found");
+    }
+
+    if (user.role !== "user") {
+      return errorResMsg(res, 400, "You are not a user");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return errorResMsg(res, 400, "Invalid product id");
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return errorResMsg(res, 404, "Product not found");
+    }
+
+    // check if product is already in user's favorite list
+    const isProductInFavoriteList = product.favorites.includes(user._id);
+    if (!isProductInFavoriteList) {
+      return errorResMsg(res, 400, "Product not in favorite list");
+    }
+
+    // remove product from user's favorite list
+    await Product.findByIdAndUpdate(
+      productId,
+      {
+        $pull: { favorites: id },
+      },
+      {
+        new: true,
+      }
+    );
+
+    // remove product from user's favorite list
+    await User.findByIdAndUpdate(
+      id,
+      {
+        $pull: { productFavoritesList: productId },
+      },
+      {
+        new: true,
+      }
+    );
+
+    const dataInfo = {
+      message: "Product removed from favorite list",
+    };
+
+    return successResMsg(res, 200, dataInfo);
+  } catch (error) {
     next(error);
   }
 };

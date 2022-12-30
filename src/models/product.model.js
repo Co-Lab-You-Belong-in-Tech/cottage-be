@@ -35,6 +35,12 @@ const productSchema = new mongoose.Schema(
       type: String,
       enum: ["Beginner", "Intermediate", "Expert"],
     },
+    favorites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     host: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

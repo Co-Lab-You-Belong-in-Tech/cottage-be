@@ -4,6 +4,8 @@ const {
   forgotPassword,
   resetPassword,
   createProduct,
+  unfavoriteProduct,
+  favoriteProduct,
 } = require("../controllers/user.controller");
 const { isAuthenticated } = require("../middleware/isAuthenticated");
 const { upload } = require("../utils/cloudinary");
@@ -18,6 +20,12 @@ router.put(
 
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
+router.post("/favorite-product/:productId", isAuthenticated, favoriteProduct);
+router.post(
+  "/unfavorite-product/:productId",
+  isAuthenticated,
+  unfavoriteProduct
+);
 
 router.post(
   "/product",
@@ -25,5 +33,6 @@ router.post(
   isAuthenticated,
   createProduct
 );
+
 
 module.exports = router;
