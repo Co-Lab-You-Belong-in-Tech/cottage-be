@@ -364,3 +364,30 @@ exports.unfavoriteProduct = async (req, res, next) => {
     next(error);
   }
 };
+
+
+// search products by location
+exports.searchProductsByLocation = async (req, res, next) => {
+  try {
+    const { city, country } = req.query;
+
+    if (!city || !country) {
+      return errorResMsg(res, 400, "Please provide a city and country");
+    }
+
+    const products = await Product.find({
+      city: { $regex: city, $options: "i" },
+      country: { $regex: country, $options: "i" },
+    }).populate("host", "firstName lastName");
+
+    const dataInfo = {
+      message: "Products found",
+      products,
+    };
+
+    return successResMsg(res, 200, dataInfo);
+  } catch (error) {
+    next(error);
+  }
+};
+
