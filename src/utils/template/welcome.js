@@ -51,7 +51,7 @@ const welcomeTemplate = async (URL, firstName, emailToken) => {
               account. Click on the button below.
             </p>
             <a
-              href="${URL}/auth/email/verify/?token=${emailToken}"
+              href="${URL}/user/verifyemail/${emailToken}"
               style="
                 display: block;
                 text-align: center;
@@ -92,37 +92,37 @@ const welcomeTemplate = async (URL, firstName, emailToken) => {
             </p>
             <p style="text-align: center">
               <a
-                href="https://instagram.com/spaceethq_"
+                href="https://instagram.com/"
                 target="_blank"
                 rel="noreferrer"
                 style="color: #eab221; text-decoration: none; padding: 10px"
               >
                 <img
-                  src="https://res.cloudinary.com/drsimple/image/upload/v1643729265/instagram_1_dflm0v.png"
+                  src=""
                   alt="Instagram"
                   style="width: 24px; height: 24px; filter: brigtness(0)"
                 />
               </a>
               <a
-                href="https://twitter.com/spaceethq_"
+                href="https://twitter.com/"
                 target="_blank"
                 rel="noreferrer"
                 style="color: #eab221; text-decoration: none; padding: 10px"
               >
                 <img
-                  src="https://res.cloudinary.com/drsimple/image/upload/v1643728488/twitter_1_chwff2.png"
+                  src=""
                   alt="Twitter"
                   style="width: 24px; height: 24px"
                 />
               </a>
               <a
-                href="https://www.linkedin.com/company/spaceet"
+                href="https://www.linkedin.com/company/"
                 target="_blank"
                 rel="noreferrer"
                 style="color: #eab221; text-decoration: none; padding: 10px"
               >
                 <img
-                  src="https://res.cloudinary.com/drsimple/image/upload/v1643728502/linkedin_lcyxa1.png"
+                  src=""
                   alt="LinkedIn"
                   style="width: 24px; height: 24px"
                 />

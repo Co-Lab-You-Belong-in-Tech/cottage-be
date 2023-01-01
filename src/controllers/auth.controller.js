@@ -44,7 +44,7 @@ exports.userSignUp = async (req, res) => {
       emailToken: crypto.randomBytes(64).toString("hex"),
     });
 
-    let URL = process.env.CLIENT_URL;
+    let URL = process.env_NODE_ENV ? process.env.CLIENT_URL :  "https://cottage-fe.vercel.app";
 
     // send email
     const options = {
@@ -136,7 +136,7 @@ exports.userLogin = async (req, res) => {
 // Verify user email
 exports.verifyEmail = async (req, res) => {
   try {
-    const token = req.query.token;
+    const token = req.params.token;
     const user = await User.findOne({
       emailToken: token,
     });
