@@ -9,7 +9,7 @@ exports.isAuthenticated = (req, res, next) => {
         status: "fail",
         message: "Authentication failed" ,
       });
-
+    
     const decoded = jwt.verify(token, process.env.USER_JWT_TOKEN);
 
     if (!decoded) {
