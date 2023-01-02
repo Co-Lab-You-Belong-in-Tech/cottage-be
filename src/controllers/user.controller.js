@@ -26,7 +26,10 @@ exports.forgotPassword = async (req, res) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetURL = `http://localhost:3000/resetPassword/${resetToken}`;
+
+    const resetURL = process.env.NODE_ENV
+      ? `http://localhost:3000/resetPassword/${resetToken}`
+      : `https://cottage-fe.vercel.app/resetPassword/${resetToken}`;
 
     const options = {
       email,
