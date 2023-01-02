@@ -8,6 +8,7 @@ const {
   favoriteProduct,
   searchProductsByLocation,
   searchProductsByFoodType,
+  searchProductsByFavorites,
 } = require("../controllers/user.controller");
 const { isAuthenticated } = require("../middleware/isAuthenticated");
 const { upload } = require("../utils/cloudinary");
@@ -38,4 +39,7 @@ router.post(
 
 router.get("/search-products", searchProductsByLocation);
 router.get("/search-products-food", searchProductsByFoodType);
+
+router.get("/search-products-favorites", isAuthenticated, searchProductsByFavorites);
+
 module.exports = router;

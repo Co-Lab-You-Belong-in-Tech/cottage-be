@@ -119,6 +119,7 @@ exports.userLogin = async (req, res) => {
         expiresIn: "2h",
       }
     );
+    res.cookie("access_token", access_token);
 
     return res.status(200).json({
       status: "success",

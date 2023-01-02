@@ -418,5 +418,45 @@ exports.searchProductsByFoodType = async (req, res, next) => {
   }
 };
 
+// Searc products by favorites
+exports.searchProductsByFavorites = async (req, res, next) => {
+  try {
+    const { _id: id } = req.user;
+
+    if (id === null && id === "") {
+      return errorResMsg(res, 400, "Please provide a valid id");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return errorResMsg(res, 400, "Invalid id");
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return errorResMsg(res, 404, "User not found");
+    }
+
+    if (user.role !== "user") {
+      return errorResMsg(res, 400, "You are not a user");
+    }
+
+    const products = await Product.find({
+      _id: { $in: user.productFavoritesList },
+    }).populate("host", "firstName lastName");
+
+    const dataInfo = {
+      message: "Products found",
+      products,
+    };
+
+    return successResMsg(res, 200, dataInfo);
+
+  } catch (error) {
+    next(error);
+  }
+
+};
+
+
 
 

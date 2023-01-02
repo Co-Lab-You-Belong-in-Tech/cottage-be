@@ -23,7 +23,7 @@ exports.isAuthenticated = (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       status: "fail",
-      message: "Authentication failed" + error.message,
+      message: "Authentication failed: " + error.message,
     });
   }
 };
