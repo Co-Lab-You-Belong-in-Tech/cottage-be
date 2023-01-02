@@ -113,6 +113,8 @@ exports.userLogin = async (req, res) => {
         email,
         firstName: user.firstName,
         lastName: user.lastName,
+        role: user.role,
+
       },
       process.env.USER_JWT_TOKEN,
       {
