@@ -62,14 +62,11 @@ const userSchema = new mongoose.Schema(
       enum: ["male", "female", "rather not say"],
       default: "male",
     },
-    city: {
+    location: {
       type: String,
       trim: true,
     },
-    country: {
-      type: String,
-      trim: true,
-    },
+   
     dob: {
       type: Date,
     },

@@ -93,7 +93,7 @@ exports.resetPassword = async (req, res) => {
 // update host profile
 exports.updateHostProfile = async (req, res, next) => {
   try {
-    const { gender, city, country, dob, aboutHostSummary } = req.body;
+    const { gender, location, dob, aboutHostSummary } = req.body;
     const { _id: id } = req.user;
 
     if (id === null && id === "44") {
@@ -126,8 +126,7 @@ exports.updateHostProfile = async (req, res, next) => {
       id,
       {
         gender,
-        city,
-        country,
+        location,
         dob,
         profilePicture,
         aboutHostSummary,
@@ -156,8 +155,7 @@ exports.createProduct = async (req, res, next) => {
       foodType,
       productName,
       price,
-      city,
-      country,
+      location,
       deliveryOption,
       productDescription,
       experienceLevel,
@@ -169,8 +167,7 @@ exports.createProduct = async (req, res, next) => {
         foodType &&
         productName &&
         price &&
-        city &&
-        country &&
+        location &&
         deliveryOption &&
         productDescription &&
         experienceLevel
@@ -208,8 +205,7 @@ exports.createProduct = async (req, res, next) => {
       foodType,
       productName,
       price,
-      city,
-      country,
+      location, 
       deliveryOption,
       productDescription,
       experienceLevel,
@@ -372,15 +368,14 @@ exports.unfavoriteProduct = async (req, res, next) => {
 // search products by location
 exports.searchProductsByLocation = async (req, res, next) => {
   try {
-    const { city, country } = req.query;
+    const { location } = req.query;
 
-    if (!city || !country) {
-      return errorResMsg(res, 400, "Please provide a city and country");
+    if (!location) {
+      return errorResMsg(res, 400, "Please provide a location");
     }
 
     const products = await Product.find({
-      city: { $regex: city, $options: "i" },
-      country: { $regex: country, $options: "i" },
+      location: { $regex: location, $options: "i" }
     }).populate("host", "firstName lastName");
 
     const dataInfo = {
