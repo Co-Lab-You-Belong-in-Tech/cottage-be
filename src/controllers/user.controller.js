@@ -1,5 +1,6 @@
 const User = require("../models/user.model.js");
 const Product = require("../models/product.model.js");
+const Store = require("../models/store.model.js");
 
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
@@ -25,7 +26,6 @@ exports.forgotPassword = async (req, res) => {
     const resetToken = user.createPasswordResetToken();
 
     await user.save({ validateBeforeSave: false });
-
 
     const resetURL = process.env.NODE_ENV
       ? `http://localhost:3000/resetPassword/${resetToken}`
@@ -205,7 +205,7 @@ exports.createProduct = async (req, res, next) => {
       foodType,
       productName,
       price,
-      location, 
+      location,
       deliveryOption,
       productDescription,
       experienceLevel,
@@ -364,7 +364,6 @@ exports.unfavoriteProduct = async (req, res, next) => {
   }
 };
 
-
 // search products by location
 exports.searchProductsByLocation = async (req, res, next) => {
   try {
@@ -375,7 +374,7 @@ exports.searchProductsByLocation = async (req, res, next) => {
     }
 
     const products = await Product.find({
-      location: { $regex: location, $options: "i" }
+      location: { $regex: location, $options: "i" },
     }).populate("host", "firstName lastName");
 
     const dataInfo = {
@@ -445,13 +444,66 @@ exports.searchProductsByFavorites = async (req, res, next) => {
     };
 
     return successResMsg(res, 200, dataInfo);
-
   } catch (error) {
     next(error);
   }
+};
 
+// create a new store
+exports.createStore = async (req, res, next) => {
+  try {
+    const { _id: id } = req.user;
+    const { storeName, gender, city, country, dateOfBirth, about } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return errorResMsg(res, 400, "Invalid id");
+    }
+
+    if (!(storeName && gender && city && country && dateOfBirth && about)) {
+      return errorResMsg(res, 400, "Please provide all fields");
+    }
+
+    const user = await User.findById({ _id: id });
+    console.log(id);
+
+    if (!user) {
+      return errorResMsg(res, 404, "User not found");
+    }
+
+    if (user.role !== "host") {
+      return errorResMsg(res, 400, "You are not a host");
+    }
+
+    // upload images to cloudinary
+    const images = [];
+    if (req.files) {
+      for (let i = 0; i < req.files.length; i++) {
+        const result = await cloudinary.uploader.upload(req.files[i].path);
+        images.push(result.secure_url);
+      }
+    }
+
+    const store = await Store.create({
+      storeName,
+      images: images,
+      gender,
+      city,
+      country,
+      dateOfBirth,
+      about,
+      host: user._id,
+    });
+
+    const dataInfo = {
+      message: "Store created",
+      store,
+    };
+
+    return successResMsg(res, 201, dataInfo);
+  } catch (error) {
+    next(error);
+  }
 };
 
 
-
-
+    
