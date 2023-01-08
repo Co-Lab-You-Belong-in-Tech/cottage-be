@@ -10,6 +10,8 @@ const {
   searchProductsByFoodType,
   searchProductsByFavorites,
   createStore,
+  getAllStores,
+  getAllProducts,
 } = require("../controllers/user.controller");
 const { isAuthenticated } = require("../middleware/isAuthenticated");
 const { upload } = require("../utils/cloudinary");
@@ -53,5 +55,9 @@ router.post(
   isAuthenticated,
   createStore
 );
+
+router.get("/stores", isAuthenticated, getAllStores);
+
+router.get("/products", isAuthenticated, getAllProducts);
 
 module.exports = router;

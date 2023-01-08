@@ -506,4 +506,34 @@ exports.createStore = async (req, res, next) => {
 };
 
 
-    
+// get all stores
+exports.getAllStores = async (req, res, next) => {
+  try {
+    const stores = await Store.find().populate("host", "firstName lastName");
+
+    const dataInfo = {
+      message: "Stores found",
+      stores,
+    };
+
+    return successResMsg(res, 200, dataInfo);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// get all products
+exports.getAllProducts = async (req, res, next) => {
+  try {
+    const products = await Product.find().populate("host", "firstName lastName");
+
+    const dataInfo = {
+      message: "Products found",
+      products,
+    };
+
+    return successResMsg(res, 200, dataInfo);
+  } catch (error) {
+    next(error);
+  }
+};
