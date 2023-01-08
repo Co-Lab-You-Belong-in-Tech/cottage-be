@@ -12,6 +12,8 @@ const {
   createStore,
   getAllStores,
   getAllProducts,
+  favoriteStore,
+  unfavoriteStore,
 } = require("../controllers/user.controller");
 const { isAuthenticated } = require("../middleware/isAuthenticated");
 const { upload } = require("../utils/cloudinary");
@@ -59,5 +61,8 @@ router.post(
 router.get("/stores", isAuthenticated, getAllStores);
 
 router.get("/products", isAuthenticated, getAllProducts);
+
+router.post("/favorite-store/:storeId", isAuthenticated, favoriteStore);
+router.post("/unfavorite-store/:storeId", isAuthenticated, unfavoriteStore);
 
 module.exports = router;

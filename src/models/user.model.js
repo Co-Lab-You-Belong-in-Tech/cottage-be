@@ -66,7 +66,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-   
+
     dob: {
       type: Date,
     },
@@ -83,6 +83,12 @@ const userSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
+      },
+    ],
+    storeFavoritesList: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Store",
       },
     ],
   },

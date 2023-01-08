@@ -31,10 +31,17 @@ const storeSchema = new mongoose.Schema(
     about: {
       type: String,
     },
+
     host: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    favorites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true,

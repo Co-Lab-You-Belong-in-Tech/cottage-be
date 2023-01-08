@@ -537,3 +537,119 @@ exports.getAllProducts = async (req, res, next) => {
     next(error);
   }
 };
+
+// favorite a store
+exports.favoriteStore = async (req, res, next) => {
+  try {
+    const { _id: id } = req.user;
+    const { storeId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return errorResMsg(res, 400, "Invalid id");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(storeId)) {
+      return errorResMsg(res, 400, "Invalid store id");
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return errorResMsg(res, 404, "User not found");
+    }
+
+    if (user.role !== "user") {
+      return errorResMsg(res, 400, "You are not a user");
+    }
+
+    const store = await Store.findById(storeId);
+    if (!store) {
+      return errorResMsg(res, 404, "Store not found");
+    }
+
+   // check if store is already in favorites list
+    const storeIndex = user.storeFavoritesList.indexOf(storeId);
+    if (storeIndex !== -1) {
+      return errorResMsg(res, 400, "Store already in favorites list");
+    }
+
+    // add store to user favorites list
+    await Store.findByIdAndUpdate(
+      storeId,
+      { $push: { favorites: id } },
+    );
+
+    // add store to user favorites list
+    await User.findByIdAndUpdate(
+      id,
+      { $push: { storeFavoritesList: storeId } },
+    );
+
+    const dataInfo = {
+      message: "Store added to favorites list",
+    };
+
+    return successResMsg(res, 200, dataInfo);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+// unfavorite a store
+exports.unfavoriteStore = async (req, res, next) => {
+  try {
+    const { _id: id } = req.user;
+    const { storeId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return errorResMsg(res, 400, "Invalid id");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(storeId)) {
+      return errorResMsg(res, 400, "Invalid store id");
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return errorResMsg(res, 404, "User not found");
+    }
+
+    if (user.role !== "user") {
+      return errorResMsg(res, 400, "You are not a user");
+    }
+
+    const store = await Store.findById(storeId);
+    if (!store) {
+      return errorResMsg(res, 404, "Store not found");
+    }
+
+    // check if store is in favorites list
+    const storeIndex = user.storeFavoritesList.indexOf(storeId);
+    if (storeIndex === -1) {
+      return errorResMsg(res, 400, "Store not in favorites list");
+    }
+
+    // remove store from user favorites list
+    await Store.findByIdAndUpdate(
+      storeId,
+      { $pull: { favorites: id } },
+    );
+
+    // remove store from user favorites list
+    await User.findByIdAndUpdate(
+      id,
+      { $pull: { storeFavoritesList: storeId } },
+    );
+
+    const dataInfo = {
+      message: "Store removed from favorites list",
+    };
+
+    return successResMsg(res, 200, dataInfo);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
