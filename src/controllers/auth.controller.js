@@ -7,9 +7,6 @@ const welcomeTemplate = require("../utils/template/welcome");
 const crypto = require("crypto");
 const { successResMsg, errorResMsg } = require("../lib/response");
 
-
-
-
 // User SignUp
 exports.userSignUp = async (req, res) => {
   try {
@@ -20,7 +17,7 @@ exports.userSignUp = async (req, res) => {
     if (
       !(firstName && lastName && phoneNumber && location && email && password)
     ) {
-     return errorResMsg(res, 400, "Please fill all fields")
+      return errorResMsg(res, 400, "Please fill all fields");
     }
 
     const checkExistingUser = await User.findOne({ email });
@@ -44,7 +41,9 @@ exports.userSignUp = async (req, res) => {
       emailToken: crypto.randomBytes(64).toString("hex"),
     });
 
-    let URL = process.env_NODE_ENV ? process.env.CLIENT_URL :  "https://cottage-fe.vercel.app";
+    let URL = process.env_NODE_ENV
+      ? process.env.CLIENT_URL
+      : "https://cottage-fe.vercel.app";
 
     // send email
     const options = {
@@ -114,7 +113,6 @@ exports.userLogin = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
-
       },
       process.env.USER_JWT_TOKEN,
       {
@@ -190,6 +188,14 @@ exports.switchUserToHost = async (req, res, next) => {
       });
     }
 
+    // check if user is already a host
+    if (user.role === "host") {
+      return res.status(400).json({
+        status: "fail",
+        message: "User already a host",
+      });
+    }
+
     user.role = "host";
     await user.save();
 
@@ -202,4 +208,3 @@ exports.switchUserToHost = async (req, res, next) => {
     next(error);
   }
 };
-
