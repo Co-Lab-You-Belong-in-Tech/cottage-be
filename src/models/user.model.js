@@ -5,7 +5,8 @@ const { Binary } = require("mongodb");
 const userSchema = new mongoose.Schema(
   {
     image: {
-      type: Binary
+      // binary data
+      type: Buffer,
     },
     name: {
       type: String,
