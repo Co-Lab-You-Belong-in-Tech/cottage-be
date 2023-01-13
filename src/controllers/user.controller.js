@@ -93,7 +93,8 @@ exports.resetPassword = async (req, res) => {
 // update host profile
 exports.updateHostProfile = async (req, res, next) => {
   try {
-    const { gender, country, city, dob, aboutHostSummary } = req.body;
+    const { storeName, gender, country, city, dob, aboutHostSummary } =
+      req.body;
     const { _id: id } = req.user;
 
     if (id === null && id === "44") {
@@ -125,6 +126,7 @@ exports.updateHostProfile = async (req, res, next) => {
     await User.findByIdAndUpdate(
       id,
       {
+        storeName,
         gender,
         country,
         city,

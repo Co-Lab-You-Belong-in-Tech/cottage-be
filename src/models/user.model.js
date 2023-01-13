@@ -3,6 +3,21 @@ const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema(
   {
+    storeNAme: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    dob: {
+      type: Date,
+    },
+    aboutHostSummary: {
+      type: String,
+    },
     firstName: {
       type: String,
       required: true,
@@ -56,7 +71,6 @@ const userSchema = new mongoose.Schema(
     passwordResetExpires: {
       type: String,
     },
-    // host details
     gender: {
       type: String,
       enum: ["male", "female", "rather not say"],
