@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
+const { Binary } = require("mongodb");
 
 const userSchema = new mongoose.Schema(
   {
+    image: {
+      type: Binary
+    },
     name: {
       type: String,
     },

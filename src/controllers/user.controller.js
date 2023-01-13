@@ -93,7 +93,7 @@ exports.resetPassword = async (req, res) => {
 // update host profile
 exports.updateHostProfile = async (req, res, next) => {
   try {
-    const { name, gender, country, city, dob, aboutHostSummary } = req.body;
+    const { name, gender, country, city, dob, aboutHostSummary,image } = req.body;
     const { _id: id } = req.user;
 
     if (id === null && id === "44") {
@@ -110,14 +110,14 @@ exports.updateHostProfile = async (req, res, next) => {
     }
 
 
-    const uploadResponse = await cloudinary.uploader.upload(req.file.path);
+    // const uploadResponse = await cloudinary.uploader.upload(req.file.path);
 
-    const profilePicture = uploadResponse.secure_url;
+    // const profilePicture = uploadResponse.secure_url;
 
-    if (user.profilePictureCloudinaryId) {
-      await cloudinary.uploader.destroy(user?.profilePictureCloudinaryId);
-    }
-    const public_id_ = uploadResponse.public_id;
+    // if (user.profilePictureCloudinaryId) {
+    //   await cloudinary.uploader.destroy(user?.profilePictureCloudinaryId);
+    // }
+    // const public_id_ = uploadResponse.public_id;
 
     await User.findByIdAndUpdate(
       id,
@@ -128,9 +128,10 @@ exports.updateHostProfile = async (req, res, next) => {
         city,
         dob,
         role: "host",
-        profilePicture,
+        // profilePicture,
         aboutHostSummary,
-        profilePictureCloudinaryId: public_id_,
+        image
+        // profilePictureCloudinaryId: public_id_,
       },
       {
         new: true,
