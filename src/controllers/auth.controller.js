@@ -198,6 +198,7 @@ exports.switchUserToHost = async (req, res, next) => {
       message: "User switched to host",
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
