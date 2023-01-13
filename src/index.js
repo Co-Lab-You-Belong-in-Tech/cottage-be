@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.disable("x-powered-by");
 
 app.get("/", (req, res) => {
-  res.send("Hello World! --- Welcome to Cottage Bakers");
+  res.send("Hello World! -- Welcome to Cottage Bakers");
 });
 
 app.use("/api/v1/auth", authRoutes);
