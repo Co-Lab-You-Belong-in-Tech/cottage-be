@@ -14,7 +14,7 @@ const storeSchema = new mongoose.Schema(
     gender: {
       type: String,
       required: true,
-      enum: ["male", "female", "others", "rather not say"],
+      enum: ["Male", "Female", "Others", "Rather not say"],
     },
     city: {
       type: String,
