@@ -145,6 +145,7 @@ exports.updateHostProfile = async (req, res, next) => {
 
     return successResMsg(res, 200, dataInfo);
   } catch (error) {
+    console.log("error in updateHostProfile");
     console.log(error);
     next(error);
   }
