@@ -109,9 +109,6 @@ exports.updateHostProfile = async (req, res, next) => {
       return errorResMsg(res, 404, "User not found");
     }
 
-    if (user.role !== "host") {
-      return errorResMsg(res, 400, "You are not a host");
-    }
 
     const uploadResponse = await cloudinary.uploader.upload(req.file.path);
 
@@ -130,6 +127,7 @@ exports.updateHostProfile = async (req, res, next) => {
         country,
         city,
         dob,
+        role: "host",
         profilePicture,
         aboutHostSummary,
         profilePictureCloudinaryId: public_id_,
